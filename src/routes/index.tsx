@@ -1,66 +1,79 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import heroImg from "@/assets/hero-runway.jpg";
 import winner1 from "@/assets/winner-1.jpg";
 import winner2 from "@/assets/winner-2.jpg";
 import winner3 from "@/assets/winner-3.jpg";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
   component: Landing,
 });
 
-const PARTNERS = ["SSENSE", "MOOD FABRICS", "CLO 3D", "VOGUE INDIA", "DAZED", "PREMIÈRE VISION", "BOF", "PARSONS"];
+const PARTNERS = [
+  "HUM STYLE",
+  "GUL AHMED",
+  "SAPPHIRE",
+  "KHAADI",
+  "MASOOD TEXTILE",
+  "PFDC",
+  "DAWN IMAGES",
+  "GENERATION",
+];
 
 const STEPS = [
-  { n: "01", t: "Submit 3 looks", d: "Upload your strongest work. No full collection required." },
-  { n: "02", t: "Public vote + jury score", d: "Industry judges and 200k followers shortlist 10 finalists." },
-  { n: "03", t: "Live finale, NYC", d: "Walk the runway in front of buyers, press, and the next mentor of your career." },
+  { n: "01", t: "Submit 3 looks", d: "Upload your strongest work — sketches, samples, or shot looks. No full collection required." },
+  { n: "02", t: "Public vote + jury score", d: "A panel of Pakistani designers and 100k+ followers shortlist the top 30." },
+  { n: "03", t: "Live finale, Karachi", d: "Walk the runway in front of buyers, press, and the mentors who will shape your career." },
   { n: "04", t: "Production run", d: "Winner gets capital, fabric, and shelf space. Not just a trophy." },
 ];
 
 const PRIZES = [
-  ["$50,000", "in non-dilutive cash. No equity, no strings."],
-  ["$15k fabric grant", "From Mood Fabrics & sponsoring mills."],
-  ["12-month mentorship", "1:1 with a CFDA-recognized designer."],
-  ["Marketplace launch", "Featured drop. Keep 70% of every sale."],
-  ["Première Vision Paris", "All-expenses sourcing trip + buyer intros."],
-  ["Editorial coverage", "Profile in partner magazines + BoF."],
+  ["PKR 25 Lakh", "in non-dilutive cash. No equity, no strings."],
+  ["PKR 5 Lakh fabric grant", "From sponsoring mills — Gul Ahmed, Sapphire & Masood."],
+  ["12-month mentorship", "1:1 with a PFDC-recognized designer."],
+  ["Marketplace launch", "Featured drop on ADORZIA. Keep 70% of every sale."],
+  ["Lahore + Dubai trade trip", "All-expenses sourcing trip + buyer introductions."],
+  ["Editorial coverage", "Profile in HUM Style, Dawn Images & Diva Magazine."],
 ];
 
 const WINNERS = [
-  { img: winner1, name: "Maria Chen", year: "S/S 23 Winner", now: "Assistant Designer, Coach", quote: "It got my portfolio in front of the right people. Three weeks later I had two offers." },
-  { img: winner2, name: "Daniel Okafor", year: "F/W 23 Winner", now: "Founder, OKAFOR STUDIO — stocked at SSENSE", quote: "I came in with three samples sewn in my mom's basement. I left with a production line." },
-  { img: winner3, name: "Lou Renard", year: "S/S 24 Winner", now: "Knitwear Designer, Loewe", quote: "The mentorship is the prize. The cash just paid for the move to Paris." },
+  { img: winner1, name: "Maria Chen", year: "Demo Cohort", now: "Featured Designer", quote: "It got my portfolio in front of the right people. Three weeks later I had two stockists." },
+  { img: winner2, name: "Daniel Okafor", year: "Demo Cohort", now: "Founder, Studio Drop", quote: "I came in with three samples sewn at home. I left with a production line." },
+  { img: winner3, name: "Lou Renard", year: "Demo Cohort", now: "Knitwear Designer", quote: "The mentorship is the prize. The cash just paid for the studio." },
 ];
 
 const DATES = [
-  ["Early entry deadline", "Mar 14, 2026", "$50 — saves you 60%"],
-  ["Final entry deadline", "Apr 30, 2026", "$200 standard"],
+  ["Early entry deadline", "Mar 14, 2026", "PKR 5,000 — saves you 60%"],
+  ["Final entry deadline", "Apr 30, 2026", "PKR 12,500 standard"],
   ["Semi-finalists announced", "May 22, 2026", "Top 30 published"],
-  ["Live finale", "Sep 11, 2026", "NYFW — Spring Studios, NYC"],
+  ["Live finale", "Sep 11, 2026", "Karachi — Mohatta Palace lawns"],
 ];
 
 const FAQ = [
   ["Do I need a full collection?", "No. Three to five looks is enough. We're hunting for vision, not volume."],
   ["Who owns my designs?", "You do — 100%. We take a non-exclusive license only to promote the competition."],
-  ["Can international designers apply?", "Yes. Finalists receive a travel + accommodation stipend for the NYC finale."],
+  ["Can designers from any city in Pakistan apply?", "Yes — Karachi, Lahore, Islamabad, Peshawar, Quetta, Multan, anywhere. Finalists receive a travel + accommodation stipend for the Karachi finale."],
   ["What if I don't win?", "Every semi-finalist gets a written portfolio review and access to the sponsor directory."],
-  ["What's the entry fee for?", "Jury time, production of the finale show, and the prize pool. Fee waivers available — ask."],
-  ["Is there an age limit?", "No, but our community skews 20–30. Self-taught welcome."],
+  ["What's the entry fee for?", "Jury time, production of the finale show, and the prize pool. Need-based fee waivers available — ask."],
+  ["Is there an age limit?", "No, but our community skews 20–30. Self-taught and NCA / IVS / Indus Valley grads equally welcome."],
 ];
 
 function Landing() {
+  const [sponsorOpen, setSponsorOpen] = useState(false);
+
   return (
     <main className="bg-background text-foreground min-h-screen">
       {/* NAV */}
       <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-background/70 border-b border-border">
         <div className="mx-auto max-w-[1400px] px-6 lg:px-10 h-16 flex items-center justify-between">
-          <a href="#top" className="font-display font-bold tracking-tight text-lg">
-            ATELIER<span className="text-neon">/01</span>
+          <a href="#top" className="font-display font-bold tracking-[0.18em] text-lg">
+            ADORZIA<span className="text-neon">.</span>
           </a>
           <nav className="hidden md:flex items-center gap-8 text-xs uppercase tracking-[0.18em] text-muted-foreground">
             <a href="#how" className="hover:text-foreground transition">How it works</a>
             <a href="#prize" className="hover:text-foreground transition">Prize</a>
-            <a href="#winners" className="hover:text-foreground transition">Alumni</a>
+            <a href="#winners" className="hover:text-foreground transition">Designers</a>
             <a href="#sponsors" className="hover:text-foreground transition">Sponsors</a>
             <a href="#faq" className="hover:text-foreground transition">FAQ</a>
           </nav>
@@ -85,7 +98,7 @@ function Landing() {
           <div className="mx-auto max-w-[1400px] w-full px-6 lg:px-10 pb-16 lg:pb-24">
             <div className="flex items-center gap-3 mb-8 text-xs uppercase tracking-[0.2em] text-muted-foreground font-mono">
               <span className="w-2 h-2 bg-neon rounded-full animate-pulse" />
-              S/S 26 Applications open · 1,200 applied last season
+              S/S 26 — Pakistan's first national fashion competition · Applications open
             </div>
 
             <h1 className="font-display font-bold uppercase tracking-[-0.02em] leading-[0.88] text-balance text-[clamp(2.75rem,9vw,9rem)] max-w-[16ch]">
@@ -95,20 +108,20 @@ function Landing() {
 
             <p className="mt-8 max-w-xl text-base lg:text-lg text-muted-foreground leading-relaxed">
               <span className="text-foreground font-medium">3 rounds. 10 finalists. 1 winner.</span><br />
-              Judged by Zara's former Head of Design, a CFDA winner, and the buying director of SSENSE. Walk away with $50k and a year of mentorship.
+              The first-ever Pakistan national-level fashion competition for emerging designers — judged by industry veterans, PFDC members, and the buying directors of the country's biggest retailers. Walk away with PKR 25 Lakh and a year of mentorship.
             </p>
 
             <div className="mt-10 flex flex-wrap items-center gap-3">
               <a href="#apply" className="btn-neon" data-hover="Yes, I'm ready">
                 Apply Now — Early bird ends Mar 14
               </a>
-              <a href="#" className="btn-ghost">Download prospectus ↓</a>
+              <a href="#prize" className="btn-ghost">See the prize ↓</a>
             </div>
 
             <div className="mt-16 grid grid-cols-3 gap-6 max-w-2xl border-t border-border pt-6">
-              <Stat n="$50k" l="Cash prize" />
+              <Stat n="PKR 25L" l="Cash prize" />
               <Stat n="10" l="Finalists / season" />
-              <Stat n="2.4%" l="Acceptance rate" />
+              <Stat n="1st" l="National-level in PK" />
             </div>
           </div>
         </div>
@@ -155,12 +168,12 @@ function Landing() {
         </div>
         <p className="mt-10 max-w-2xl font-serif text-2xl lg:text-3xl leading-snug text-balance">
           “We don't take equity. We take pride in seeing your name on a label two years from now.”
-          <span className="block mt-3 text-sm font-display not-italic uppercase tracking-[0.2em] text-muted-foreground">— Founder's note</span>
+          <span className="block mt-3 text-sm font-display not-italic uppercase tracking-[0.2em] text-muted-foreground">— Founder's note, ADORZIA</span>
         </p>
       </Section>
 
       {/* WINNERS */}
-      <Section id="winners" eyebrow="Alumni" title={<>Where last season's <br /><span className="font-serif italic font-light">winners are now.</span></>}>
+      <Section id="winners" eyebrow="The class of S/S 26" title={<>Where our designers <br /><span className="font-serif italic font-light">are headed.</span></>}>
         <div className="grid md:grid-cols-3 gap-8 mt-16">
           {WINNERS.map((w) => (
             <article key={w.name} className="group">
@@ -208,15 +221,15 @@ function Landing() {
           <div className="lg:col-span-5">
             <div className="text-xs uppercase tracking-[0.2em] text-neon font-mono mb-4">For Brands & Mills</div>
             <h2 className="font-display text-4xl lg:text-5xl font-bold uppercase tracking-tight leading-[0.95] text-balance">
-              Own the next generation of talent <span className="font-serif italic font-light">before their agent does.</span>
+              Own the next generation of Pakistani talent <span className="font-serif italic font-light">before their agent does.</span>
             </h2>
           </div>
           <div className="lg:col-span-7 lg:pt-4">
             <ul className="space-y-5 text-base lg:text-lg">
               {[
-                "First look at 100+ vetted emerging designers.",
+                "First look at 100+ vetted emerging Pakistani designers.",
                 "Branded challenge integration — your fabric, their collection.",
-                "Quarterly trend report on what Gen Z is actually making.",
+                "Quarterly trend report on what Gen Z in PK is actually making.",
                 "Casting access for in-house and freelance hires.",
               ].map((b) => (
                 <li key={b} className="flex gap-4 border-b border-border pb-5">
@@ -226,7 +239,9 @@ function Landing() {
               ))}
             </ul>
             <div className="mt-8 flex gap-3">
-              <a href="#" className="btn-ghost">Request sponsorship deck</a>
+              <button onClick={() => setSponsorOpen(true)} className="btn-neon" data-hover="Get the deck">
+                Request sponsorship deck
+              </button>
             </div>
           </div>
         </div>
@@ -249,15 +264,15 @@ function Landing() {
             onSubmit={(e) => { e.preventDefault(); alert("Demo: application submitted."); }}
             className="lg:col-span-7 space-y-6"
           >
-            <Field label="Your name" name="name" placeholder="Jane Doe" />
+            <Field label="Your name" name="name" placeholder="Ayesha Khan" />
             <Field label="Email" name="email" type="email" placeholder="you@studio.com" />
-            <Field label="Portfolio link" name="portfolio" placeholder="https://" />
+            <Field label="Portfolio / Instagram link" name="portfolio" placeholder="https://" />
             <div>
               <label className="block text-xs uppercase tracking-[0.2em] text-muted-foreground font-mono mb-3">
                 Category
               </label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                {["Womenswear", "Menswear", "Knitwear", "Accessories"].map((c) => (
+                {["Womenswear", "Menswear", "Bridal & Couture", "Accessories"].map((c) => (
                   <label key={c} className="cursor-pointer">
                     <input type="radio" name="category" className="peer sr-only" defaultChecked={c === "Womenswear"} />
                     <div className="border border-border peer-checked:border-neon peer-checked:text-neon px-4 py-3 text-center text-sm uppercase tracking-wider font-display transition hover:border-foreground">
@@ -267,7 +282,7 @@ function Landing() {
                 ))}
               </div>
             </div>
-            <button type="submit" className="btn-neon w-full md:w-auto" data-hover="See you in NYC">
+            <button type="submit" className="btn-neon w-full md:w-auto" data-hover="See you in Karachi">
               Submit application →
             </button>
             <p className="text-xs text-muted-foreground font-mono">By applying you agree to our entry terms. You retain 100% IP.</p>
@@ -299,7 +314,7 @@ function Landing() {
             Your breakout is <br /><span className="font-serif italic font-light text-muted-foreground">three clicks</span> away.
           </h2>
           <p className="mt-10 text-muted-foreground max-w-xl mx-auto text-base lg:text-lg">
-            Last season: <span className="text-foreground font-medium">1,200 applicants</span>. <span className="text-foreground font-medium">50 spots</span>. Early bird closes <span className="text-neon">March 14</span>.
+            Pakistan's first ever national-level fashion competition. Early bird closes <span className="text-neon">March 14</span>.
           </p>
           <div className="mt-12 flex flex-wrap justify-center gap-3">
             <a href="#apply" className="btn-neon" data-hover="No excuses">
@@ -313,18 +328,185 @@ function Landing() {
       <footer className="border-t border-border">
         <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-12 flex flex-col md:flex-row justify-between gap-6 text-xs uppercase tracking-[0.18em] text-muted-foreground font-mono">
           <div>
-            ATELIER<span className="text-neon">/01</span> · NYC × Paris × Lagos
+            ADORZIA<span className="text-neon">.</span> · Karachi × Lahore × Islamabad
           </div>
           <div className="flex gap-6">
             <a href="#" className="hover:text-foreground">Instagram</a>
-            <a href="#" className="hover:text-foreground">Substack</a>
+            <a href="#" className="hover:text-foreground">TikTok</a>
             <a href="#" className="hover:text-foreground">Press</a>
             <a href="#" className="hover:text-foreground">Contact</a>
           </div>
-          <div>© 2026 — All rights reserved</div>
+          <div>© 2026 ADORZIA — All rights reserved</div>
         </div>
       </footer>
+
+      {sponsorOpen && <SponsorModal onClose={() => setSponsorOpen(false)} />}
     </main>
+  );
+}
+
+function SponsorModal({ onClose }: { onClose: () => void }) {
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setStatus("submitting");
+    setErrorMsg("");
+    const fd = new FormData(e.currentTarget);
+    const payload = {
+      company: String(fd.get("company") || "").trim(),
+      contact_name: String(fd.get("contact_name") || "").trim(),
+      work_email: String(fd.get("work_email") || "").trim(),
+      role: String(fd.get("role") || "").trim() || null,
+      sponsor_tier: String(fd.get("sponsor_tier") || "").trim() || null,
+      budget_range: String(fd.get("budget_range") || "").trim() || null,
+      message: String(fd.get("message") || "").trim() || null,
+      source: "landing_page",
+      user_agent: typeof navigator !== "undefined" ? navigator.userAgent.slice(0, 500) : null,
+    };
+
+    const { error } = await supabase.from("sponsor_requests").insert(payload);
+    if (error) {
+      setStatus("error");
+      setErrorMsg(error.message || "Something went wrong. Please try again.");
+      return;
+    }
+    setStatus("success");
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto bg-background border border-border shadow-2xl"
+      >
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute top-4 right-4 text-muted-foreground hover:text-neon font-mono text-2xl leading-none z-10"
+        >
+          ×
+        </button>
+
+        {status === "success" ? (
+          <div className="p-10 lg:p-14 text-center">
+            <div className="text-xs uppercase tracking-[0.3em] text-neon font-mono mb-6">— Confirmed —</div>
+            <h3 className="font-display text-3xl lg:text-4xl font-bold uppercase tracking-tight mb-4">
+              Deck en route.
+            </h3>
+            <p className="text-muted-foreground max-w-md mx-auto mb-8">
+              Check your inbox in the next few minutes. The ADORZIA sponsorship deck (PDF) will land from <span className="text-foreground">partnerships@adorzia.pk</span>. If it doesn't arrive, check spam — or reply to confirm.
+            </p>
+            <button onClick={onClose} className="btn-neon" data-hover="Back to site">
+              Close
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="p-8 lg:p-12">
+            <div className="text-xs uppercase tracking-[0.2em] text-neon font-mono mb-3">— Sponsorship deck</div>
+            <h3 className="font-display text-3xl lg:text-4xl font-bold uppercase tracking-tight mb-3 leading-tight">
+              Tell us who you are. <br /><span className="font-serif italic font-light text-muted-foreground">We'll send the deck.</span>
+            </h3>
+            <p className="text-sm text-muted-foreground mb-8 max-w-md">
+              Tier breakdowns (PKR 5L → 50L), audience demographics, brand integration formats, and the S/S 26 media plan.
+            </p>
+
+            <div className="grid md:grid-cols-2 gap-5">
+              <ModalField label="Company" name="company" required placeholder="e.g. Sapphire" />
+              <ModalField label="Your name" name="contact_name" required placeholder="Full name" />
+              <ModalField label="Work email" name="work_email" type="email" required placeholder="you@brand.pk" />
+              <ModalField label="Your role" name="role" placeholder="Head of Marketing" />
+
+              <div>
+                <label className="block text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-mono mb-2">
+                  Sponsor tier
+                </label>
+                <select name="sponsor_tier" defaultValue="" className="w-full bg-transparent border border-border focus:border-neon outline-none px-3 py-2.5 text-sm font-display transition">
+                  <option value="" className="bg-background">Select tier</option>
+                  <option value="title" className="bg-background">Title — PKR 50L+</option>
+                  <option value="presenting" className="bg-background">Presenting — PKR 25L</option>
+                  <option value="category" className="bg-background">Category — PKR 10L</option>
+                  <option value="supporting" className="bg-background">Supporting — PKR 5L</option>
+                  <option value="exploring" className="bg-background">Just exploring</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-mono mb-2">
+                  Budget range
+                </label>
+                <select name="budget_range" defaultValue="" className="w-full bg-transparent border border-border focus:border-neon outline-none px-3 py-2.5 text-sm font-display transition">
+                  <option value="" className="bg-background">Select range</option>
+                  <option value="<5L" className="bg-background">Under PKR 5 Lakh</option>
+                  <option value="5-15L" className="bg-background">PKR 5–15 Lakh</option>
+                  <option value="15-50L" className="bg-background">PKR 15–50 Lakh</option>
+                  <option value="50L+" className="bg-background">PKR 50 Lakh+</option>
+                  <option value="undecided" className="bg-background">Undecided</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="mt-5">
+              <label className="block text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-mono mb-2">
+                Anything we should know? <span className="opacity-60">(optional)</span>
+              </label>
+              <textarea
+                name="message"
+                rows={3}
+                maxLength={2000}
+                placeholder="Activation ideas, timeline, fabric we'd contribute..."
+                className="w-full bg-transparent border border-border focus:border-neon outline-none px-3 py-2.5 text-sm font-display transition resize-none"
+              />
+            </div>
+
+            {status === "error" && (
+              <p className="mt-4 text-sm text-neon font-mono">⚠ {errorMsg}</p>
+            )}
+
+            <div className="mt-7 flex flex-wrap items-center gap-3">
+              <button
+                type="submit"
+                disabled={status === "submitting"}
+                className="btn-neon disabled:opacity-50"
+                data-hover="Sending..."
+              >
+                {status === "submitting" ? "Sending..." : "Email me the deck →"}
+              </button>
+              <button type="button" onClick={onClose} className="btn-ghost">
+                Cancel
+              </button>
+            </div>
+
+            <p className="mt-5 text-[11px] text-muted-foreground font-mono leading-relaxed">
+              We use your details only to send the deck and one follow-up. No newsletter, no resale.
+            </p>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ModalField({ label, name, type = "text", placeholder, required }: { label: string; name: string; type?: string; placeholder?: string; required?: boolean }) {
+  return (
+    <div>
+      <label htmlFor={name} className="block text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-mono mb-2">
+        {label} {required && <span className="text-neon">*</span>}
+      </label>
+      <input
+        id={name}
+        name={name}
+        type={type}
+        required={required}
+        placeholder={placeholder}
+        maxLength={name === "work_email" ? 320 : 200}
+        className="w-full bg-transparent border border-border focus:border-neon outline-none px-3 py-2.5 text-sm font-display placeholder:text-muted-foreground/50 transition"
+      />
+    </div>
   );
 }
 
