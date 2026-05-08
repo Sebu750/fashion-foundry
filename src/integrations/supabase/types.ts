@@ -14,7 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      sponsor_requests: {
+        Row: {
+          budget_range: string | null
+          company: string
+          contact_name: string
+          created_at: string
+          id: string
+          message: string | null
+          role: string | null
+          source: string | null
+          sponsor_tier: string | null
+          user_agent: string | null
+          work_email: string
+        }
+        Insert: {
+          budget_range?: string | null
+          company: string
+          contact_name: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          role?: string | null
+          source?: string | null
+          sponsor_tier?: string | null
+          user_agent?: string | null
+          work_email: string
+        }
+        Update: {
+          budget_range?: string | null
+          company?: string
+          contact_name?: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          role?: string | null
+          source?: string | null
+          sponsor_tier?: string | null
+          user_agent?: string | null
+          work_email?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
