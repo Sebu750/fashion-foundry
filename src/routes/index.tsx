@@ -61,6 +61,40 @@ const FAQ = [
 
 function Landing() {
   const [sponsorOpen, setSponsorOpen] = useState(false);
+  const [applyStatus, setApplyStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [applyError, setApplyError] = useState("");
+  const [applyCategory, setApplyCategory] = useState("Womenswear");
+
+  async function handleApply(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setApplyStatus("submitting");
+    setApplyError("");
+    const fd = new FormData(e.currentTarget);
+    const payload = {
+      name: String(fd.get("name") || "").trim(),
+      email: String(fd.get("email") || "").trim(),
+      portfolio: String(fd.get("portfolio") || "").trim(),
+      category: String(fd.get("category") || applyCategory).trim(),
+      source: "landing_page",
+      user_agent: typeof navigator !== "undefined" ? navigator.userAgent.slice(0, 500) : null,
+    };
+
+    const { error } = await supabase.from("applications").insert(payload);
+    if (error) {
+      setApplyStatus("error");
+      setApplyError(error.message || "Something went wrong. Please try again.");
+      return;
+    }
+
+    void fetch("/api/crm/application-sync", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }).catch(() => {});
+
+    setApplyStatus("success");
+    (e.target as HTMLFormElement).reset();
+  }
 
   return (
     <main className="bg-background text-foreground min-h-screen">
