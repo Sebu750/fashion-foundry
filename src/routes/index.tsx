@@ -372,6 +372,14 @@ function SponsorModal({ onClose }: { onClose: () => void }) {
       setErrorMsg(error.message || "Something went wrong. Please try again.");
       return;
     }
+
+    // Fire-and-forget CRM sync; CRM failure must not block UX
+    void fetch("/api/crm/sponsor-sync", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }).catch(() => {});
+
     setStatus("success");
   }
 
