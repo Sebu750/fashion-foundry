@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiCrmSponsorSyncRouteImport } from './routes/api/crm/sponsor-sync'
+import { Route as ApiCrmApplicationSyncRouteImport } from './routes/api/crm/application-sync'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,30 +23,39 @@ const ApiCrmSponsorSyncRoute = ApiCrmSponsorSyncRouteImport.update({
   path: '/api/crm/sponsor-sync',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCrmApplicationSyncRoute = ApiCrmApplicationSyncRouteImport.update({
+  id: '/api/crm/application-sync',
+  path: '/api/crm/application-sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/crm/application-sync': typeof ApiCrmApplicationSyncRoute
   '/api/crm/sponsor-sync': typeof ApiCrmSponsorSyncRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/crm/application-sync': typeof ApiCrmApplicationSyncRoute
   '/api/crm/sponsor-sync': typeof ApiCrmSponsorSyncRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/crm/application-sync': typeof ApiCrmApplicationSyncRoute
   '/api/crm/sponsor-sync': typeof ApiCrmSponsorSyncRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/crm/sponsor-sync'
+  fullPaths: '/' | '/api/crm/application-sync' | '/api/crm/sponsor-sync'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/crm/sponsor-sync'
-  id: '__root__' | '/' | '/api/crm/sponsor-sync'
+  to: '/' | '/api/crm/application-sync' | '/api/crm/sponsor-sync'
+  id: '__root__' | '/' | '/api/crm/application-sync' | '/api/crm/sponsor-sync'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiCrmApplicationSyncRoute: typeof ApiCrmApplicationSyncRoute
   ApiCrmSponsorSyncRoute: typeof ApiCrmSponsorSyncRoute
 }
 
@@ -65,13 +75,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCrmSponsorSyncRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/crm/application-sync': {
+      id: '/api/crm/application-sync'
+      path: '/api/crm/application-sync'
+      fullPath: '/api/crm/application-sync'
+      preLoaderRoute: typeof ApiCrmApplicationSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiCrmApplicationSyncRoute: ApiCrmApplicationSyncRoute,
   ApiCrmSponsorSyncRoute: ApiCrmSponsorSyncRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
