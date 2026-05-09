@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      applications: {
+        Row: {
+          category: string
+          created_at: string
+          email: string
+          id: string
+          name: string
+          portfolio: string
+          source: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          portfolio: string
+          source?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          portfolio?: string
+          source?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       sponsor_requests: {
         Row: {
           budget_range: string | null
