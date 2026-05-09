@@ -61,6 +61,40 @@ const FAQ = [
 
 function Landing() {
   const [sponsorOpen, setSponsorOpen] = useState(false);
+  const [applyStatus, setApplyStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [applyError, setApplyError] = useState("");
+  const [applyCategory, setApplyCategory] = useState("Womenswear");
+
+  async function handleApply(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setApplyStatus("submitting");
+    setApplyError("");
+    const fd = new FormData(e.currentTarget);
+    const payload = {
+      name: String(fd.get("name") || "").trim(),
+      email: String(fd.get("email") || "").trim(),
+      portfolio: String(fd.get("portfolio") || "").trim(),
+      category: String(fd.get("category") || applyCategory).trim(),
+      source: "landing_page",
+      user_agent: typeof navigator !== "undefined" ? navigator.userAgent.slice(0, 500) : null,
+    };
+
+    const { error } = await supabase.from("applications").insert(payload);
+    if (error) {
+      setApplyStatus("error");
+      setApplyError(error.message || "Something went wrong. Please try again.");
+      return;
+    }
+
+    void fetch("/api/crm/application-sync", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }).catch(() => {});
+
+    setApplyStatus("success");
+    (e.target as HTMLFormElement).reset();
+  }
 
   return (
     <main className="bg-background text-foreground min-h-screen">
@@ -260,10 +294,19 @@ function Landing() {
             </p>
           </div>
 
-          <form
-            onSubmit={(e) => { e.preventDefault(); alert("Demo: application submitted."); }}
-            className="lg:col-span-7 space-y-6"
-          >
+          {applyStatus === "success" ? (
+            <div className="lg:col-span-7 border border-neon/40 p-8 lg:p-10">
+              <div className="text-xs uppercase tracking-[0.3em] text-neon font-mono mb-4">— Received</div>
+              <h3 className="font-display text-2xl lg:text-3xl font-bold uppercase tracking-tight mb-3">
+                You're in the pipeline.
+              </h3>
+              <p className="text-muted-foreground mb-6">
+                We'll review your portfolio and get back via email with next steps within 5 working days.
+              </p>
+              <button onClick={() => setApplyStatus("idle")} className="btn-ghost">Submit another</button>
+            </div>
+          ) : (
+          <form onSubmit={handleApply} className="lg:col-span-7 space-y-6">
             <Field label="Your name" name="name" placeholder="Ayesha Khan" />
             <Field label="Email" name="email" type="email" placeholder="you@studio.com" />
             <Field label="Portfolio / Instagram link" name="portfolio" placeholder="https://" />
@@ -271,10 +314,17 @@ function Landing() {
               <label className="block text-xs uppercase tracking-[0.2em] text-muted-foreground font-mono mb-3">
                 Category
               </label>
+              <input type="hidden" name="category" value={applyCategory} />
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                 {["Womenswear", "Menswear", "Bridal & Couture", "Accessories"].map((c) => (
                   <label key={c} className="cursor-pointer">
-                    <input type="radio" name="category" className="peer sr-only" defaultChecked={c === "Womenswear"} />
+                    <input
+                      type="radio"
+                      name="category_choice"
+                      className="peer sr-only"
+                      checked={applyCategory === c}
+                      onChange={() => setApplyCategory(c)}
+                    />
                     <div className="border border-border peer-checked:border-neon peer-checked:text-neon px-4 py-3 text-center text-sm uppercase tracking-wider font-display transition hover:border-foreground">
                       {c}
                     </div>
@@ -282,11 +332,20 @@ function Landing() {
                 ))}
               </div>
             </div>
-            <button type="submit" className="btn-neon w-full md:w-auto" data-hover="See you in Karachi">
-              Submit application →
+            {applyStatus === "error" && (
+              <p className="text-sm text-neon font-mono">⚠ {applyError}</p>
+            )}
+            <button
+              type="submit"
+              disabled={applyStatus === "submitting"}
+              className="btn-neon w-full md:w-auto disabled:opacity-50"
+              data-hover="See you in Karachi"
+            >
+              {applyStatus === "submitting" ? "Submitting..." : "Submit application →"}
             </button>
             <p className="text-xs text-muted-foreground font-mono">By applying you agree to our entry terms. You retain 100% IP.</p>
           </form>
+          )}
         </div>
       </section>
 
